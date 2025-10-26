@@ -15,12 +15,7 @@ git add .
 
 # 3. 初回コミット
 echo "3. コミット作成中..."
-git commit -m "feat: Django プロジェクト Ver 2.0 初期セットアップ
-
-- Djangoプロジェクト構造を追加
-- npm scriptsでサーバー起動可能に
-- テンプレートと静的ファイルを整理
-- README とセットアップスクリプトを追加"
+git commit -m "feat: Django project Ver 2.0 initial setup" -m "- Add Django project structure" -m "- Enable server startup with npm scripts" -m "- Organize templates and static files" -m "- Add README and setup scripts"
 
 # 4. リモートリポジトリを追加
 echo "4. リモートリポジトリを設定中..."
