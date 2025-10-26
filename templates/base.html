@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}集いしもの達{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="{% static 'js/toast.js' %}"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <!-- モバイルオーバーレイ -->
+    <div id="mobileOverlay" class="mobile-overlay fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+
+    <div class="flex h-screen">
+        <!-- Mobile Header -->
+        <div class="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-slate-200 z-30 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <button id="mobileMenuBtn" class="hamburger mr-3 p-2">
+                    <span class="block w-6 h-0.5 bg-slate-800 mb-1.5"></span>
+                    <span class="block w-6 h-0.5 bg-slate-800 mb-1.5"></span>
+                    <span class="block w-6 h-0.5 bg-slate-800"></span>
+                </button>
+                <h1 class="text-xl font-bold text-indigo-600">Re:Start</h1>
+            </div>
+            <div class="flex items-center">
+                <img src="https://placehold.co/32x32/E0E7FF/4F46E5?text=Y" alt="User Avatar" class="w-8 h-8 rounded-full">
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="mobile-menu md:translate-x-0 fixed md:static w-64 bg-white border-r border-slate-200 flex flex-col z-40 h-full top-0 left-0">
+            <div class="p-6 border-b border-slate-200">
+                <h1 class="text-2xl font-bold text-indigo-600">Re:Start</h1>
+                <p class="text-sm text-slate-500 mt-1">Web Application</p>
+            </div>
+            <nav id="main-nav" class="flex-1 p-4 space-y-2">
+                <a href="{% url 'main:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %} flex items-center px-4 py-2.5 text-slate-700 {% if request.resolver_match.url_name == 'home' %}bg-indigo-50 font-semibold{% else %}text-slate-600 hover:bg-slate-100 font-medium{% endif %} rounded-lg">
+                    <i data-lucide="home" class="w-5 h-5 mr-3 {% if request.resolver_match.url_name == 'home' %}text-indigo-600{% else %}text-slate-500{% endif %}"></i>
+                    <span>ホーム</span>
+                </a>
+                <a href="{% url 'main:documents' %}" class="nav-link {% if 'document' in request.resolver_match.url_name %}active{% endif %} flex items-center px-4 py-2.5 {% if 'document' in request.resolver_match.url_name %}text-slate-700 bg-indigo-50 font-semibold{% else %}text-slate-600 hover:bg-slate-100 font-medium{% endif %} rounded-lg">
+                    <i data-lucide="files" class="w-5 h-5 mr-3 {% if 'document' in request.resolver_match.url_name %}text-indigo-600{% else %}text-slate-500{% endif %}"></i>
+                    <span>書類管理</span>
+                </a>
+                <a href="{% url 'main:settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %} flex items-center px-4 py-2.5 {% if request.resolver_match.url_name == 'settings' %}text-slate-700 bg-indigo-50 font-semibold{% else %}text-slate-600 hover:bg-slate-100 font-medium{% endif %} rounded-lg">
+                    <i data-lucide="settings" class="w-5 h-5 mr-3 {% if request.resolver_match.url_name == 'settings' %}text-indigo-600{% else %}text-slate-500{% endif %}"></i>
+                    <span>設定</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-200">
+                <div class="flex items-center">
+                    <img src="https://placehold.co/40x40/E0E7FF/4F46E5?text=Y" alt="User Avatar" class="w-10 h-10 rounded-full">
+                    <div class="ml-3">
+                        <p class="font-semibold">山田 太郎</p>
+                        <p class="text-sm text-slate-500">Taro.Yamada@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto pt-16 md:pt-0">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('open');
+            mobileOverlay.classList.toggle('show');
+            mobileMenuBtn.classList.toggle('active');
+        }
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        }
+
+        if (mobileOverlay) {
+            mobileOverlay.addEventListener('click', toggleMobileMenu);
+        }
+
+        // サイドバーのリンクをクリックしたらメニューを閉じる（モバイルのみ）
+        const navLinks = document.querySelectorAll('#sidebar a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+
+        // ウィンドウサイズが変わったときの処理
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('open');
+                mobileOverlay.classList.remove('show');
+                mobileMenuBtn.classList.remove('active');
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}書類編集 - 集いしもの達{% endblock %}
+
+{% block content %}
+<div class="p-8 fade-in">
+    <a href="{% url 'main:documents' %}" class="flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 mb-4">
+        <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+        <span>キャンセル</span>
+    </a>
+
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h2 class="text-3xl font-bold">書類の作成・編集</h2>
+            <p class="text-slate-500 mt-1">内容を入力または編集してください。</p>
+        </div>
+        <button onclick="window.location.href='{% url 'main:document_detail' %}'" class="py-2 px-5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-semibold">
+            保存
+        </button>
+    </div>
+
+    <div class="bg-white p-8 rounded-xl border border-slate-200 space-y-6">
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">書類タイトル</label>
+            <input type="text" id="documentTitle" value="A株式会社 応募用履歴書" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">学歴・職歴</label>
+            <textarea
+                id="educationHistory"
+                rows="5"
+                class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="2015年4月 株式会社〇〇 入社..."
+                data-char-counter
+                data-target="300"
+                data-max="500"
+            ></textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">自己PR</label>
+            <div class="relative">
+                <textarea
+                    id="selfPR"
+                    rows="8"
+                    class="block w-full px-3 py-2 pb-12 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="私の強みは..."
+                    data-char-counter
+                    data-target="400"
+                    data-max="600"
+                ></textarea>
+                <button onclick="showInfo('保存済みパーツ機能は今後実装予定です')" class="absolute bottom-16 right-3 bg-slate-100 text-indigo-700 text-xs font-semibold py-1.5 px-3 rounded-full hover:bg-slate-200 flex items-center transition-colors">
+                    <i data-lucide="archive" class="w-3.5 h-3.5 mr-1.5"></i>
+                    保存済みパーツを引用
+                </button>
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">志望動機</label>
+            <textarea
+                id="motivation"
+                rows="10"
+                class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="貴社を志望する理由は..."
+                data-char-counter
+                data-target="500"
+                data-max="800"
+            ></textarea>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/character-counter.js' %}"></script>
+<script>
+    // 保存ボタンのイベントリスナー
+    document.querySelector('button[onclick*="document_detail"]').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // 保存処理（本来はバックエンドに送信）
+        showSuccess('書類を保存しました');
+
+        // 少し待ってからページ遷移
+        setTimeout(() => {
+            window.location.href = "{% url 'main:document_detail' %}";
+        }, 1000);
+    });
+
+    // キャンセルボタンにも確認を追加
+    document.querySelector('a[href*="documents"]').addEventListener('click', function(e) {
+        const hasContent = document.getElementById('documentTitle').value !== '' ||
+                          document.getElementById('educationHistory').value !== '' ||
+                          document.getElementById('selfPR').value !== '' ||
+                          document.getElementById('motivation').value !== '';
+
+        if (hasContent) {
+            e.preventDefault();
+            if (confirm('編集内容が保存されていません。本当に戻りますか？')) {
+                window.location.href = this.href;
+            }
+        }
+    });
+</script>
+{% endblock %}

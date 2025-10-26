@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}設定 - 集いしもの達{% endblock %}
+
+{% block content %}
+<div class="p-8 fade-in">
+    <h2 class="text-3xl font-bold mb-6">設定</h2>
+
+    <div class="max-w-2xl space-y-8">
+        <div class="bg-white p-6 rounded-xl border border-slate-200">
+            <h3 class="text-lg font-semibold border-b pb-3 mb-4">アカウント情報</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="font-medium text-slate-600">氏名</label>
+                    <p>山田 太郎</p>
+                </div>
+                <div>
+                    <label class="font-medium text-slate-600">メールアドレス</label>
+                    <p>Taro.Yamada@email.com</p>
+                </div>
+                <button class="text-sm font-semibold text-indigo-600 hover:underline">
+                    アカウント情報を変更
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border border-slate-200">
+            <h3 class="text-lg font-semibold border-b pb-3 mb-4">その他</h3>
+            <div class="divide-y">
+                <a href="#" class="py-3 flex justify-between items-center hover:bg-slate-50 -mx-6 px-6">
+                    <span>利用規約</span>
+                    <i data-lucide="chevron-right" class="text-slate-400"></i>
+                </a>
+                <a href="#" class="py-3 flex justify-between items-center hover:bg-slate-50 -mx-6 px-6">
+                    <span>プライバシーポリシー</span>
+                    <i data-lucide="chevron-right" class="text-slate-400"></i>
+                </a>
+                <a href="#" class="py-3 flex justify-between items-center text-red-600 hover:bg-red-50 -mx-6 px-6">
+                    <span>ログアウト</span>
+                    <i data-lucide="log-out"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

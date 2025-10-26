@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}機能デモ - 集いしもの達{% endblock %}
+
+{% block content %}
+<div class="p-8 fade-in">
+    <h2 class="text-3xl font-bold mb-2">機能デモページ</h2>
+    <p class="text-slate-500 mb-8">実装された機能をテストできます。</p>
+
+    <!-- トースト通知のテスト -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200 mb-6">
+        <h3 class="text-lg font-semibold mb-4">1. トースト通知システム</h3>
+        <p class="text-sm text-slate-600 mb-4">4種類の通知をテストできます。画面右上に表示されます。</p>
+        <div class="flex flex-wrap gap-3">
+            <button onclick="showSuccess('保存に成功しました')" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold">
+                成功通知
+            </button>
+            <button onclick="showError('エラーが発生しました')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold">
+                エラー通知
+            </button>
+            <button onclick="showWarning('注意が必要です')" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-semibold">
+                警告通知
+            </button>
+            <button onclick="showInfo('情報をお知らせします')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                情報通知
+            </button>
+        </div>
+    </div>
+
+    <!-- 文字数カウンターのテスト -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200 mb-6">
+        <h3 class="text-lg font-semibold mb-4">2. 文字数カウンター</h3>
+        <p class="text-sm text-slate-600 mb-4">テキストを入力すると、リアルタイムで文字数がカウントされます。目標文字数に対する進捗も表示されます。</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">テキストエリア 1（目標: 100文字）</label>
+                <textarea
+                    rows="3"
+                    class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="ここに入力してください..."
+                    data-char-counter
+                    data-target="100"
+                    data-max="150"
+                ></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">テキストエリア 2（目標: 200文字）</label>
+                <textarea
+                    rows="4"
+                    class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="ここに入力してください..."
+                    data-char-counter
+                    data-target="200"
+                    data-max="300"
+                ></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- レスポンシブ対応のテスト -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200 mb-6">
+        <h3 class="text-lg font-semibold mb-4">3. レスポンシブ対応（モバイルメニュー）</h3>
+        <p class="text-sm text-slate-600 mb-4">
+            ブラウザのウィンドウを縮小するか、デベロッパーツールのモバイルビューで確認してください。
+        </p>
+        <ul class="text-sm text-slate-600 space-y-2">
+            <li class="flex items-center">
+                <i data-lucide="check" class="w-4 h-4 mr-2 text-emerald-600"></i>
+                <span>768px以下でモバイルヘッダーが表示されます</span>
+            </li>
+            <li class="flex items-center">
+                <i data-lucide="check" class="w-4 h-4 mr-2 text-emerald-600"></i>
+                <span>ハンバーガーメニューをクリックするとサイドバーがスライドイン</span>
+            </li>
+            <li class="flex items-center">
+                <i data-lucide="check" class="w-4 h-4 mr-2 text-emerald-600"></i>
+                <span>オーバーレイをクリックするとメニューが閉じます</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ファイルアップロードのテスト -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200 mb-6">
+        <h3 class="text-lg font-semibold mb-4">4. ファイルアップロード機能</h3>
+        <p class="text-sm text-slate-600 mb-4">
+            書類管理ページの「アップロード」ボタンからテストできます。
+        </p>
+        <a href="{% url 'main:documents' %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
+            <i data-lucide="arrow-right" class="w-4 h-4 mr-2"></i>
+            書類管理ページへ
+        </a>
+    </div>
+
+    <!-- 統合デモ -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <h3 class="text-lg font-semibold mb-4">統合デモ</h3>
+        <p class="text-sm text-slate-600 mb-4">すべての機能を組み合わせた動作をテストします。</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">メッセージを入力</label>
+                <textarea
+                    id="demoTextarea"
+                    rows="4"
+                    class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="メッセージを入力してください..."
+                    data-char-counter
+                    data-target="50"
+                    data-max="100"
+                ></textarea>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="testIntegratedDemo('success')" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-semibold">
+                    成功として送信
+                </button>
+                <button onclick="testIntegratedDemo('error')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold">
+                    エラーとして送信
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/character-counter.js' %}"></script>
+<script>
+    function testIntegratedDemo(type) {
+        const textarea = document.getElementById('demoTextarea');
+        const message = textarea.value.trim();
+
+        if (!message) {
+            showWarning('メッセージを入力してください');
+            return;
+        }
+
+        const charCount = message.length;
+
+        if (type === 'success') {
+            showSuccess(`メッセージを送信しました（${charCount}文字）`);
+            textarea.value = '';
+
+            // 文字数カウンターを手動で更新
+            const event = new Event('input', { bubbles: true });
+            textarea.dispatchEvent(event);
+        } else if (type === 'error') {
+            showError(`送信に失敗しました（文字数: ${charCount}）`);
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}書類詳細 - 集いしもの達{% endblock %}
+
+{% block content %}
+<div class="p-8 fade-in">
+    <a href="{% url 'main:documents' %}" class="flex items-center text-sm font-semibold text-slate-600 hover:text-indigo-600 mb-4">
+        <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+        <span>書類管理へ戻る</span>
+    </a>
+
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <h2 class="text-3xl font-bold">A株式会社 応募用履歴書</h2>
+            <p class="text-slate-500 mt-1">プレビュー</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="flex items-center justify-center py-2 px-4 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors shadow-sm font-semibold">
+                <i data-lucide="download" class="mr-2 h-5 w-5"></i>
+                <span>ダウンロード</span>
+            </button>
+            <a href="{% url 'main:document_edit' %}" class="flex items-center justify-center py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-semibold">
+                <i data-lucide="edit" class="mr-2 h-5 w-5"></i>
+                <span>編集する</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg border border-slate-200 h-[70vh] overflow-y-auto">
+        <h2 class="text-center font-bold text-2xl mb-6">履歴書</h2>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="col-span-2">
+                <p class="text-sm">ふりがな</p>
+                <p class="text-lg">やまだ たろう</p>
+            </div>
+            <div class="row-span-2">
+                <div class="w-24 h-32 bg-slate-200 border flex items-center justify-center">
+                    <span class="text-sm text-slate-500">写真</span>
+                </div>
+            </div>
+            <div class="col-span-2">
+                <p class="text-sm">氏名</p>
+                <p class="text-2xl font-bold">山田 太郎</p>
+            </div>
+        </div>
+        <hr class="my-4">
+        <p class="font-bold mb-2">職務経歴</p>
+        <p class="text-slate-700 leading-relaxed">
+            2015年4月 株式会社〇〇に入社。営業部に配属され、法人向けにITソリューションの提案営業を行う。...
+        </p>
+        <p class="text-slate-400 my-8 text-center">(プレビュー内容が続きます)</p>
+    </div>
+</div>
+{% endblock %}

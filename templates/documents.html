@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}書類管理 - 集いしもの達{% endblock %}
+
+{% block content %}
+<div class="p-8 fade-in">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold">書類管理</h2>
+            <p class="text-slate-500 mt-1">応募書類を一元管理します。</p>
+        </div>
+        <div class="flex gap-3">
+            <button id="uploadBtn" class="flex items-center justify-center py-2 px-4 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors shadow-sm font-semibold">
+                <i data-lucide="upload-cloud" class="mr-2 text-indigo-600 h-5 w-5"></i>
+                <span>アップロード</span>
+            </button>
+            <a href="{% url 'main:document_edit' %}" class="flex items-center justify-center py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-semibold">
+                <i data-lucide="file-plus-2" class="mr-2 h-5 w-5"></i>
+                <span>新規作成</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 検索・フィルター -->
+    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- 検索バー -->
+            <div class="flex-1 relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="書類タイトルで検索..."
+                    class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+            </div>
+
+            <!-- 種類フィルター -->
+            <div class="flex gap-2">
+                <button class="filter-btn active px-4 py-2 rounded-lg font-semibold text-sm transition-colors" data-type="all">
+                    すべて
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg font-semibold text-sm transition-colors" data-type="履歴書">
+                    履歴書
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg font-semibold text-sm transition-colors" data-type="ES">
+                    ES
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-lg font-semibold text-sm transition-colors" data-type="職務経歴書">
+                    職務経歴書
+                </button>
+            </div>
+
+            <!-- ソート -->
+            <select id="sortSelect" class="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="date-desc">更新日（新しい順）</option>
+                <option value="date-asc">更新日（古い順）</option>
+                <option value="title-asc">タイトル（A-Z）</option>
+                <option value="title-desc">タイトル（Z-A）</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 結果表示 -->
+    <div class="mb-4 flex items-center justify-between">
+        <p class="text-sm text-slate-600">
+            <span id="resultCount">12</span> 件の書類が見つかりました
+        </p>
+        <button id="clearFilters" class="text-sm text-indigo-600 hover:underline font-semibold hidden">
+            フィルターをクリア
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-200 text-sm text-slate-500">
+                <tr>
+                    <th class="p-4 font-medium">書類タイトル</th>
+                    <th class="p-4 font-medium">種類</th>
+                    <th class="p-4 font-medium">最終更新日</th>
+                    <th class="p-4 font-medium"></th>
+                </tr>
+            </thead>
+            <tbody id="documentTableBody">
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="A株式会社 応募用履歴書" data-type="履歴書" data-date="2024-01-14">
+                    <td class="p-4 font-semibold">A株式会社 応募用履歴書</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded-full">履歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">2日前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="B製作所 ES (技術職)" data-type="ES" data-date="2024-01-11">
+                    <td class="p-4 font-semibold">B製作所 ES (技術職)</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full">ES</span>
+                    </td>
+                    <td class="p-4 text-slate-600">5日前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="職務経歴書 (汎用)" data-type="職務経歴書" data-date="2024-01-09">
+                    <td class="p-4 font-semibold">職務経歴書 (汎用)</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded-full">職務経歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">1週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="C商事 応募書類" data-type="履歴書" data-date="2024-01-08">
+                    <td class="p-4 font-semibold">C商事 応募書類</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded-full">履歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">1週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="D株式会社 ES" data-type="ES" data-date="2024-01-07">
+                    <td class="p-4 font-semibold">D株式会社 ES</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full">ES</span>
+                    </td>
+                    <td class="p-4 text-slate-600">1週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="E工業 職務経歴書" data-type="職務経歴書" data-date="2024-01-05">
+                    <td class="p-4 font-semibold">E工業 職務経歴書</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded-full">職務経歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">2週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="F企業 履歴書" data-type="履歴書" data-date="2024-01-03">
+                    <td class="p-4 font-semibold">F企業 履歴書</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded-full">履歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">2週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="G株式会社 エントリーシート" data-type="ES" data-date="2024-01-01">
+                    <td class="p-4 font-semibold">G株式会社 エントリーシート</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full">ES</span>
+                    </td>
+                    <td class="p-4 text-slate-600">2週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="H商社 応募用履歴書" data-type="履歴書" data-date="2023-12-28">
+                    <td class="p-4 font-semibold">H商社 応募用履歴書</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded-full">履歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">3週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="I製作所 職務経歴書" data-type="職務経歴書" data-date="2023-12-25">
+                    <td class="p-4 font-semibold">I製作所 職務経歴書</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded-full">職務経歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">3週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row border-b border-slate-200 hover:bg-slate-50" data-title="J株式会社 ES (営業職)" data-type="ES" data-date="2023-12-20">
+                    <td class="p-4 font-semibold">J株式会社 ES (営業職)</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-full">ES</span>
+                    </td>
+                    <td class="p-4 text-slate-600">4週間前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+                <tr class="document-row hover:bg-slate-50" data-title="K企業 履歴書・職務経歴書" data-type="履歴書" data-date="2023-12-15">
+                    <td class="p-4 font-semibold">K企業 履歴書・職務経歴書</td>
+                    <td class="p-4 text-slate-600">
+                        <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2 py-1 rounded-full">履歴書</span>
+                    </td>
+                    <td class="p-4 text-slate-600">1ヶ月前</td>
+                    <td class="p-4 text-right">
+                        <a href="{% url 'main:document_detail' %}" class="text-indigo-600 font-semibold text-sm hover:underline">詳細</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 結果が0件の場合の表示 -->
+        <div id="noResults" class="hidden p-8 text-center text-slate-500">
+            <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 text-slate-400"></i>
+            <p class="font-semibold">該当する書類が見つかりませんでした</p>
+            <p class="text-sm mt-1">検索条件を変更してお試しください</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/document-filter.js' %}"></script>
+<script src="{% static 'js/file-upload.js' %}"></script>
+<script>
+    // アップロードボタンをクリックしたときにモーダルを表示
+    document.getElementById('uploadBtn').addEventListener('click', function() {
+        showUploadModal();
+    });
+
+    function showUploadModal() {
+        // モーダルを作成
+        const modal = document.createElement('div');
+        modal.id = 'uploadModal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="text-2xl font-bold">ファイルをアップロード</h3>
+                    <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div id="fileDropZone" class="upload-area p-12 rounded-xl text-center cursor-pointer">
+                        <i data-lucide="upload-cloud" class="w-16 h-16 mx-auto text-indigo-600 mb-4"></i>
+                        <p class="text-lg font-semibold text-slate-700 mb-2">ファイルをドラッグ&ドロップ</p>
+                        <p class="text-sm text-slate-500 mb-4">または、クリックしてファイルを選択</p>
+                        <p class="text-xs text-slate-400">対応形式: PDF, Word, テキストファイル (最大10MB)</p>
+                    </div>
+
+                    <div id="uploadedFilesContainer" class="mt-6 space-y-3">
+                        <!-- アップロードされたファイルがここに表示される -->
+                    </div>
+                </div>
+                <div class="p-6 border-t border-slate-200 flex justify-end gap-3">
+                    <button onclick="closeUploadModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-semibold">
+                        キャンセル
+                    </button>
+                    <button onclick="completeUpload()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
+                        完了
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // アイコンを初期化
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // ファイルアップロード機能を初期化
+        initFileUpload();
+
+        // モーダル外をクリックしたら閉じる
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeUploadModal();
+            }
+        });
+
+        // ESCキーで閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeUploadModal();
+            }
+        });
+    }
+
+    window.closeUploadModal = function() {
+        const modal = document.getElementById('uploadModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    window.completeUpload = function() {
+        const files = window.fileUploader.getUploadedFiles();
+        if (files.length > 0) {
+            showSuccess(`${files.length}件のファイルをアップロードしました`);
+            closeUploadModal();
+            // ここで実際にはページをリロードするか、リストを更新する
+        } else {
+            showWarning('アップロードするファイルを選択してください');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{
+  "defaultMode": "acceptEdits",
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(npm:*)",
+      "Bash(yarn:*)",
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "Bash(django-admin:*)",
+      "Bash(manage.py:*)",
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "LS(*)",
+      "MultiEdit(*)"
+    ]
+  }
+}
